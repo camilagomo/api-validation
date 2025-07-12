@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # API REST - Carrinho de Compras E-commerce
-=======
- # API REST - Carrinho de Compras E-commerce
->>>>>>> 11e4beaca9a12414177881e81a18c27c446e05a3
 
 Esta é uma API REST desenvolvida em JavaScript com Express para gestão de carrinho de compras em um e-commerce. O projeto foi criado para estudos de teste de software.
 
@@ -198,8 +194,4 @@ Para configurar o deploy automático:
 
 ## 📊 Cobertura de Testes
 
-<<<<<<< HEAD
-Os relatórios de cobertura são gerados automaticamente e enviados para o Codecov após cada push. 
-=======
-Os relatórios de cobertura são gerados automaticamente e enviados para o Codecov após cada push. 
->>>>>>> 11e4beaca9a12414177881e81a18c27c446e05a3
+Os relatórios de cobertura são gerados automaticamente e enviados para o Codecov após cada push.
