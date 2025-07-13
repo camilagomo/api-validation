@@ -174,17 +174,6 @@ Para desenvolvimento local, a API estará disponível em:
 - **URL**: `http://localhost:3000`
 - **Swagger**: `http://localhost:3000/api-docs`
 
-## 🚀 Deploy
-
-Para configurar o deploy automático:
-
-1. Configure os secrets no GitHub:
-   - `HEROKU_API_KEY`
-   - `HEROKU_APP_NAME`
-   - `HEROKU_EMAIL`
-
-2. O deploy será executado automaticamente após push para a branch `main`
-
 ## 📊 Cobertura de Testes
 
 Os relatórios de cobertura são gerados automaticamente e enviados para o Codecov após cada push.
