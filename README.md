@@ -114,14 +114,13 @@ http://localhost:3000/api-docs
 
 ## 🔄 CI/CD
 
-O projeto utiliza um workflow único de CI/CD no GitHub Actions, que executa automaticamente:
+O projeto utiliza um workflow de CI (Continuous Integration) no GitHub Actions, que executa automaticamente:
 
 - **Lint:** Verifica a qualidade do código com ESLint
 - **Testes:** Executa todos os testes automatizados com Jest e Supertest
 - **Auditoria de Segurança:** Roda `npm audit` para identificar vulnerabilidades
-- **Deploy:** Faz deploy automático para o Heroku (apenas na branch `main`)
 
-O pipeline é executado em cada push ou pull request para as branches `main` e `develop`. O deploy só ocorre em pushs para a branch `main`.
+O pipeline é executado em cada push ou pull request para as branches `main` e `develop`.
 
 O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 
