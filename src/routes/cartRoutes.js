@@ -27,4 +27,4 @@ router.put('/:productId/quantity', updateQuantity);
 // DELETE /api/cart/:productId - Remover produto
 router.delete('/:productId', removeFromCart);
 
-module.exports = router; 
+module.exports = router;

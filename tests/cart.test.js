@@ -2,13 +2,13 @@ const request = require('supertest');
 const app = require('../src/server');
 
 describe('API do Carrinho de Compras', () => {
-  beforeEach(async () => {
+  beforeEach(async() => {
     // Limpa o carrinho antes de cada teste
     await request(app).delete('/api/cart/clear');
   });
 
   describe('GET /api/cart', () => {
-    it('deve retornar carrinho vazio inicialmente', async () => {
+    it('deve retornar carrinho vazio inicialmente', async() => {
       const response = await request(app)
         .get('/api/cart')
         .expect(200);
@@ -21,7 +21,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('POST /api/cart/add', () => {
-    it('deve adicionar um produto ao carrinho com sucesso', async () => {
+    it('deve adicionar um produto ao carrinho com sucesso', async() => {
       const product = {
         productId: '1',
         name: 'Produto Teste',
@@ -39,7 +39,7 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.data).toMatchObject(product);
     });
 
-    it('deve retornar 400 quando campos obrigatórios estão faltando', async () => {
+    it('deve retornar 400 quando campos obrigatórios estão faltando', async() => {
       const invalidProduct = {
         productId: '1',
         name: 'Produto Teste'
@@ -57,7 +57,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('PUT /api/cart/:productId/quantity', () => {
-    beforeEach(async () => {
+    beforeEach(async() => {
       // Adiciona um produto primeiro
       await request(app)
         .post('/api/cart/add')
@@ -69,7 +69,7 @@ describe('API do Carrinho de Compras', () => {
         });
     });
 
-    it('deve atualizar quantidade do produto com sucesso', async () => {
+    it('deve atualizar quantidade do produto com sucesso', async() => {
       const response = await request(app)
         .put('/api/cart/1/quantity')
         .send({ quantity: 5 })
@@ -80,7 +80,7 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.data.quantity).toBe(5);
     });
 
-    it('deve retornar 400 quando quantidade está faltando', async () => {
+    it('deve retornar 400 quando quantidade está faltando', async() => {
       const response = await request(app)
         .put('/api/cart/1/quantity')
         .send({})
@@ -90,7 +90,7 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.error).toBe('Campo obrigatório');
     });
 
-    it('deve retornar 404 quando produto não existe', async () => {
+    it('deve retornar 404 quando produto não existe', async() => {
       const response = await request(app)
         .put('/api/cart/999/quantity')
         .send({ quantity: 5 })
@@ -101,7 +101,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('DELETE /api/cart/:productId', () => {
-    beforeEach(async () => {
+    beforeEach(async() => {
       // Adiciona um produto primeiro
       await request(app)
         .post('/api/cart/add')
@@ -113,7 +113,7 @@ describe('API do Carrinho de Compras', () => {
         });
     });
 
-    it('deve remover produto do carrinho com sucesso', async () => {
+    it('deve remover produto do carrinho com sucesso', async() => {
       const response = await request(app)
         .delete('/api/cart/1')
         .expect(200);
@@ -122,7 +122,7 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.message).toBe('Produto removido do carrinho com sucesso');
     });
 
-    it('deve retornar 404 quando produto não existe', async () => {
+    it('deve retornar 404 quando produto não existe', async() => {
       const response = await request(app)
         .delete('/api/cart/999')
         .expect(404);
@@ -132,7 +132,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('GET /api/cart/:productId', () => {
-    beforeEach(async () => {
+    beforeEach(async() => {
       // Adiciona um produto primeiro
       await request(app)
         .post('/api/cart/add')
@@ -144,7 +144,7 @@ describe('API do Carrinho de Compras', () => {
         });
     });
 
-    it('deve retornar detalhes do produto com sucesso', async () => {
+    it('deve retornar detalhes do produto com sucesso', async() => {
       const response = await request(app)
         .get('/api/cart/1')
         .expect(200);
@@ -154,7 +154,7 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.data.name).toBe('Produto Teste');
     });
 
-    it('deve retornar 404 quando produto não existe', async () => {
+    it('deve retornar 404 quando produto não existe', async() => {
       const response = await request(app)
         .get('/api/cart/999')
         .expect(404);
@@ -165,7 +165,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('DELETE /api/cart/clear', () => {
-    beforeEach(async () => {
+    beforeEach(async() => {
       // Adiciona produtos primeiro
       await request(app)
         .post('/api/cart/add')
@@ -186,7 +186,7 @@ describe('API do Carrinho de Compras', () => {
         });
     });
 
-    it('deve limpar o carrinho com sucesso', async () => {
+    it('deve limpar o carrinho com sucesso', async() => {
       const response = await request(app)
         .delete('/api/cart/clear')
         .expect(200);
@@ -205,7 +205,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('Cálculo do total do carrinho', () => {
-    it('deve calcular o total corretamente com múltiplos produtos', async () => {
+    it('deve calcular o total corretamente com múltiplos produtos', async() => {
       // Adiciona primeiro produto
       await request(app)
         .post('/api/cart/add')
@@ -237,7 +237,7 @@ describe('API do Carrinho de Compras', () => {
   });
 
   describe('Atualização de quantidade de produtos', () => {
-    beforeEach(async () => {
+    beforeEach(async() => {
       await request(app)
         .post('/api/cart/add')
         .send({
@@ -248,7 +248,7 @@ describe('API do Carrinho de Compras', () => {
         });
     });
 
-    it('deve atualizar quantidade e recalcular o total', async () => {
+    it('deve atualizar quantidade e recalcular o total', async() => {
       // Atualiza quantidade
       await request(app)
         .put('/api/cart/1/quantity')
@@ -264,4 +264,4 @@ describe('API do Carrinho de Compras', () => {
       expect(response.body.data.items[0].quantity).toBe(3);
     });
   });
-}); 
+});

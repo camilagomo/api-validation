@@ -7,7 +7,7 @@ class CartModel {
   // Adicionar produto ao carrinho
   addItem(product) {
     const existingItem = this.items.find(item => item.productId === product.productId);
-    
+
     if (existingItem) {
       // Sobrescreve os dados do produto, não soma a quantidade
       existingItem.name = product.name;
@@ -16,7 +16,7 @@ class CartModel {
     } else {
       this.items.push({ ...product });
     }
-    
+
     return product;
   }
 
@@ -66,4 +66,4 @@ class CartModel {
   }
 }
 
-module.exports = new CartModel(); 
+module.exports = new CartModel();

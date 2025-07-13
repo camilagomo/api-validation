@@ -141,7 +141,7 @@ const removeFromCart = (req, res) => {
 const clearCart = (req, res) => {
   try {
     cartModel.clear();
-    
+
     res.json({
       success: true,
       message: 'Carrinho limpo com sucesso'
@@ -161,4 +161,4 @@ module.exports = {
   updateQuantity,
   removeFromCart,
   clearCart
-}; 
+};
