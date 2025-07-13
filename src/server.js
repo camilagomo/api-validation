@@ -120,12 +120,14 @@ app.use('*', (req, res) => {
   });
 });
 
-// Inicialização do servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📚 Documentação disponível em: http://localhost:${PORT}/api-docs`);
-  console.log(`🔗 API disponível em: http://localhost:${PORT}/api/cart`);
-  console.log(`💚 Health check em: http://localhost:${PORT}/health`);
-});
+// Inicialização do servidor apenas se não estiver em teste
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`📚 Documentação disponível em: http://localhost:${PORT}/api-docs`);
+    console.log(`🔗 API disponível em: http://localhost:${PORT}/api/cart`);
+    console.log(`💚 Health check em: http://localhost:${PORT}/health`);
+  });
+}
 
 module.exports = app; 

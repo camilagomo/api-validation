@@ -13,7 +13,7 @@ const getCart = (req, res) => {
       success: true,
       data: {
         items: cart,
-        total: total,
+        total,
         itemCount: cart.length
       }
     });

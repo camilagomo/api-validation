@@ -1,80 +1,51 @@
 let cart = [];
 
-const addProduct = (product) => {
-  const { productId, name, price, quantity } = product;
-  if (!productId || !name || !price || !quantity) {
-    throw new Error('Todos os campos são obrigatórios: productId, name, price, quantity');
-  }
-  if (price <= 0 || quantity <= 0) {
-    throw new Error('Preço e quantidade devem ser maiores que zero');
-  }
-  const existingProductIndex = cart.findIndex(item => item.productId === productId);
-  if (existingProductIndex !== -1) {
-    cart[existingProductIndex].quantity += quantity;
-    return cart[existingProductIndex];
-  } else {
-    const newProduct = {
-      productId,
-      name,
-      price: parseFloat(price),
-      quantity: parseInt(quantity),
-      addedAt: new Date().toISOString()
-    };
-    cart.push(newProduct);
-    return newProduct;
-  }
-};
+function getCart() {
+  return cart;
+}
 
-const removeProduct = (productId) => {
-  const initialLength = cart.length;
-  cart = cart.filter(item => item.productId !== productId);
-  if (cart.length === initialLength) {
-    throw new Error('Produto não encontrado no carrinho');
-  }
-  return true;
-};
-
-const updateProductQuantity = (productId, quantity) => {
-  if (quantity <= 0) {
-    throw new Error('Quantidade deve ser maior que zero');
-  }
-  const productIndex = cart.findIndex(item => item.productId === productId);
-  if (productIndex === -1) {
-    throw new Error('Produto não encontrado no carrinho');
-  }
-  cart[productIndex].quantity = parseInt(quantity);
-  cart[productIndex].updatedAt = new Date().toISOString();
-  return cart[productIndex];
-};
-
-const getCart = () => {
-  return [...cart];
-};
-
-const getCartTotal = () => {
+function getCartTotal() {
   return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-};
+}
 
-const clearCart = () => {
+function addProduct({ productId, name, price, quantity }) {
+  const existing = cart.find(item => item.productId === productId);
+  if (existing) {
+    existing.quantity += quantity;
+    return existing;
+  }
+  const product = { productId, name, price, quantity };
+  cart.push(product);
+  return product;
+}
+
+function updateProductQuantity(productId, quantity) {
+  const product = cart.find(item => item.productId === productId);
+  if (!product) throw new Error('Produto não encontrado');
+  product.quantity = parseInt(quantity);
+  return product;
+}
+
+function removeProduct(productId) {
+  const index = cart.findIndex(item => item.productId === productId);
+  if (index === -1) throw new Error('Produto não encontrado');
+  cart.splice(index, 1);
+}
+
+function getProduct(productId) {
+  return cart.find(item => item.productId === productId);
+}
+
+function clearCart() {
   cart = [];
-  return true;
-};
-
-const getProduct = (productId) => {
-  return cart.find(item => item.productId === productId) || null;
-};
-
-const _forceReset = () => {
-  cart = [];
-};
+}
 
 module.exports = {
-  addProduct,
-  removeProduct,
-  updateProductQuantity,
   getCart,
   getCartTotal,
-  clearCart,
+  addProduct,
+  updateProductQuantity,
+  removeProduct,
   getProduct,
-  _forceReset
+  clearCart
 }; 

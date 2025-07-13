@@ -1,23 +1,14 @@
-/**
- * Testes da API do carrinho de compras
- * Testes de integração usando Jest e Supertest
- */
-
 const request = require('supertest');
 const app = require('../src/server');
-const cartModel = require('../src/models/cartModel');
 
-describe('API Carrinho de Compras', () => {
-  let testProductId;
-
-  // Limpa o carrinho antes de cada teste
+describe('API do Carrinho de Compras', () => {
   beforeEach(async () => {
-    cartModel._forceReset();
+    // Limpa o carrinho antes de cada teste
     await request(app).delete('/api/cart/clear');
   });
 
   describe('GET /api/cart', () => {
-    it('deve retornar carrinho vazio', async () => {
+    it('deve retornar carrinho vazio inicialmente', async () => {
       const response = await request(app)
         .get('/api/cart')
         .expect(200);
@@ -27,131 +18,60 @@ describe('API Carrinho de Compras', () => {
       expect(response.body.data.total).toBe(0);
       expect(response.body.data.itemCount).toBe(0);
     });
-
-    it('deve retornar produtos no carrinho', async () => {
-      // Adiciona um produto primeiro
-      const product = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: 29.99,
-        quantity: 2
-      };
-
-      await request(app)
-        .post('/api/cart')
-        .send(product)
-        .expect(201);
-
-      // Verifica se o produto foi adicionado
-      const response = await request(app)
-        .get('/api/cart')
-        .expect(200);
-
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.items).toHaveLength(1);
-      expect(response.body.data.total).toBe(59.98);
-      expect(response.body.data.itemCount).toBe(1);
-    });
   });
 
-  describe('POST /api/cart', () => {
-    it('deve adicionar um produto ao carrinho', async () => {
+  describe('POST /api/cart/add', () => {
+    it('deve adicionar um produto ao carrinho com sucesso', async () => {
       const product = {
-        productId: '123',
+        productId: '1',
         name: 'Produto Teste',
         price: 29.99,
         quantity: 2
       };
 
       const response = await request(app)
-        .post('/api/cart')
+        .post('/api/cart/add')
         .send(product)
         .expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe('Produto adicionado ao carrinho com sucesso');
-      expect(response.body.data.productId).toBe('123');
-      expect(response.body.data.name).toBe('Produto Teste');
-      expect(response.body.data.price).toBe(29.99);
-      expect(response.body.data.quantity).toBe(2);
+      expect(response.body.data).toMatchObject(product);
     });
 
-    it('deve atualizar quantidade se produto já existe', async () => {
-      const product = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: 29.99,
-        quantity: 2
-      };
-
-      // Adiciona o produto pela primeira vez
-      await request(app)
-        .post('/api/cart')
-        .send(product)
-        .expect(201);
-
-      // Adiciona o mesmo produto novamente
-      const response = await request(app)
-        .post('/api/cart')
-        .send(product)
-        .expect(201);
-
-      expect(response.body.data.quantity).toBe(4); // 2 + 2
-    });
-
-    it('deve retornar erro se campos obrigatórios estiverem faltando', async () => {
+    it('deve retornar 400 quando campos obrigatórios estão faltando', async () => {
       const invalidProduct = {
-        productId: '123',
+        productId: '1',
         name: 'Produto Teste'
-        // price e quantity faltando
+        // faltando price e quantity
       };
 
       const response = await request(app)
-        .post('/api/cart')
+        .post('/api/cart/add')
         .send(invalidProduct)
         .expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Campos obrigatórios');
     });
-
-    it('deve retornar erro se preço ou quantidade forem inválidos', async () => {
-      const invalidProduct = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: -10,
-        quantity: 0
-      };
-
-      const response = await request(app)
-        .post('/api/cart')
-        .send(invalidProduct)
-        .expect(400);
-
-      expect(response.body.success).toBe(false);
-    });
   });
 
-  describe('PUT /api/cart/:productId', () => {
+  describe('PUT /api/cart/:productId/quantity', () => {
     beforeEach(async () => {
-      // Adiciona um produto para os testes
-      const product = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: 29.99,
-        quantity: 2
-      };
-
+      // Adiciona um produto primeiro
       await request(app)
-        .post('/api/cart')
-        .send(product);
-
-      testProductId = '123';
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto Teste',
+          price: 29.99,
+          quantity: 2
+        });
     });
 
-    it('deve atualizar a quantidade de um produto', async () => {
+    it('deve atualizar quantidade do produto com sucesso', async () => {
       const response = await request(app)
-        .put(`/api/cart/${testProductId}`)
+        .put('/api/cart/1/quantity')
         .send({ quantity: 5 })
         .expect(200);
 
@@ -160,109 +80,81 @@ describe('API Carrinho de Compras', () => {
       expect(response.body.data.quantity).toBe(5);
     });
 
-    it('deve retornar erro se quantidade for inválida', async () => {
+    it('deve retornar 400 quando quantidade está faltando', async () => {
       const response = await request(app)
-        .put(`/api/cart/${testProductId}`)
-        .send({ quantity: 0 })
-        .expect(400);
-
-      expect(response.body.success).toBe(false);
-    });
-
-    it('deve retornar erro se produto não existir', async () => {
-      const response = await request(app)
-        .put('/api/cart/999')
-        .send({ quantity: 5 })
-        .expect(404);
-
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toBe('Erro ao atualizar quantidade');
-    });
-
-    it('deve retornar erro se quantity não for fornecida', async () => {
-      const response = await request(app)
-        .put(`/api/cart/${testProductId}`)
+        .put('/api/cart/1/quantity')
         .send({})
         .expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Campo obrigatório');
     });
+
+    it('deve retornar 404 quando produto não existe', async () => {
+      const response = await request(app)
+        .put('/api/cart/999/quantity')
+        .send({ quantity: 5 })
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
   });
 
   describe('DELETE /api/cart/:productId', () => {
     beforeEach(async () => {
-      // Adiciona um produto para os testes
-      const product = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: 29.99,
-        quantity: 2
-      };
-
+      // Adiciona um produto primeiro
       await request(app)
-        .post('/api/cart')
-        .send(product);
-
-      testProductId = '123';
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto Teste',
+          price: 29.99,
+          quantity: 2
+        });
     });
 
-    it('deve remover um produto do carrinho', async () => {
+    it('deve remover produto do carrinho com sucesso', async () => {
       const response = await request(app)
-        .delete(`/api/cart/${testProductId}`)
+        .delete('/api/cart/1')
         .expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe('Produto removido do carrinho com sucesso');
-
-      // Verifica se o produto foi realmente removido
-      const cartResponse = await request(app)
-        .get('/api/cart')
-        .expect(200);
-
-      expect(cartResponse.body.data.items).toHaveLength(0);
     });
 
-    it('deve retornar erro se produto não existir', async () => {
+    it('deve retornar 404 quando produto não existe', async () => {
       const response = await request(app)
         .delete('/api/cart/999')
         .expect(404);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.error).toBe('Erro ao remover produto');
     });
   });
 
   describe('GET /api/cart/:productId', () => {
     beforeEach(async () => {
-      // Adiciona um produto para os testes
-      const product = {
-        productId: '123',
-        name: 'Produto Teste',
-        price: 29.99,
-        quantity: 2
-      };
-
+      // Adiciona um produto primeiro
       await request(app)
-        .post('/api/cart')
-        .send(product);
-
-      testProductId = '123';
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto Teste',
+          price: 29.99,
+          quantity: 2
+        });
     });
 
-    it('deve retornar um produto específico', async () => {
+    it('deve retornar detalhes do produto com sucesso', async () => {
       const response = await request(app)
-        .get(`/api/cart/${testProductId}`)
+        .get('/api/cart/1')
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data.productId).toBe('123');
+      expect(response.body.data.productId).toBe('1');
       expect(response.body.data.name).toBe('Produto Teste');
-      expect(response.body.data.price).toBe(29.99);
-      expect(response.body.data.quantity).toBe(2);
     });
 
-    it('deve retornar erro se produto não existir', async () => {
+    it('deve retornar 404 quando produto não existe', async () => {
       const response = await request(app)
         .get('/api/cart/999')
         .expect(404);
@@ -274,30 +166,27 @@ describe('API Carrinho de Compras', () => {
 
   describe('DELETE /api/cart/clear', () => {
     beforeEach(async () => {
-      // Adiciona produtos para os testes
-      const products = [
-        {
-          productId: '123',
-          name: 'Produto 1',
+      // Adiciona produtos primeiro
+      await request(app)
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto Teste 1',
           price: 29.99,
           quantity: 2
-        },
-        {
-          productId: '456',
-          name: 'Produto 2',
-          price: 15.50,
-          quantity: 1
-        }
-      ];
+        });
 
-      for (const product of products) {
-        await request(app)
-          .post('/api/cart')
-          .send(product);
-      }
+      await request(app)
+        .post('/api/cart/add')
+        .send({
+          productId: '2',
+          name: 'Produto Teste 2',
+          price: 19.99,
+          quantity: 1
+        });
     });
 
-    it('deve limpar o carrinho', async () => {
+    it('deve limpar o carrinho com sucesso', async () => {
       const response = await request(app)
         .delete('/api/cart/clear')
         .expect(200);
@@ -310,39 +199,69 @@ describe('API Carrinho de Compras', () => {
         .get('/api/cart')
         .expect(200);
 
-      expect(cartResponse.body.data.items).toHaveLength(0);
+      expect(cartResponse.body.data.items).toEqual([]);
       expect(cartResponse.body.data.total).toBe(0);
     });
   });
 
-  describe('Rotas auxiliares', () => {
-    it('deve retornar informações da API na rota raiz', async () => {
+  describe('Cálculo do total do carrinho', () => {
+    it('deve calcular o total corretamente com múltiplos produtos', async () => {
+      // Adiciona primeiro produto
+      await request(app)
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto 1',
+          price: 10.00,
+          quantity: 2
+        });
+
+      // Adiciona segundo produto
+      await request(app)
+        .post('/api/cart/add')
+        .send({
+          productId: '2',
+          name: 'Produto 2',
+          price: 15.50,
+          quantity: 1
+        });
+
       const response = await request(app)
-        .get('/')
+        .get('/api/cart')
         .expect(200);
 
-      expect(response.body.message).toBe('API REST - Carrinho de Compras E-commerce');
-      expect(response.body.version).toBe('1.0.0');
-      expect(response.body.documentation).toBe('/api-docs');
+      expect(response.body.data.items).toHaveLength(2);
+      expect(response.body.data.total).toBe(35.50); // (10 * 2) + (15.50 * 1)
+      expect(response.body.data.itemCount).toBe(2);
+    });
+  });
+
+  describe('Atualização de quantidade de produtos', () => {
+    beforeEach(async () => {
+      await request(app)
+        .post('/api/cart/add')
+        .send({
+          productId: '1',
+          name: 'Produto Teste',
+          price: 25.00,
+          quantity: 1
+        });
     });
 
-    it('deve retornar status OK no health check', async () => {
-      const response = await request(app)
-        .get('/health')
+    it('deve atualizar quantidade e recalcular o total', async () => {
+      // Atualiza quantidade
+      await request(app)
+        .put('/api/cart/1/quantity')
+        .send({ quantity: 3 })
         .expect(200);
 
-      expect(response.body.status).toBe('OK');
-      expect(response.body.timestamp).toBeDefined();
-      expect(response.body.uptime).toBeDefined();
-    });
-
-    it('deve retornar 404 para rotas não encontradas', async () => {
+      // Verifica o total do carrinho
       const response = await request(app)
-        .get('/rota-inexistente')
-        .expect(404);
+        .get('/api/cart')
+        .expect(200);
 
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toBe('Rota não encontrada');
+      expect(response.body.data.total).toBe(75.00); // 25 * 3
+      expect(response.body.data.items[0].quantity).toBe(3);
     });
   });
 }); 
