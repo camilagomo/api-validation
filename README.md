@@ -114,14 +114,13 @@ http://localhost:3000/api-docs
 
 ## 🔄 CI/CD
 
-O projeto utiliza um workflow único de CI/CD no GitHub Actions, que executa automaticamente:
+O projeto utiliza um workflow de CI (Continuous Integration) no GitHub Actions, que executa automaticamente:
 
 - **Lint:** Verifica a qualidade do código com ESLint
 - **Testes:** Executa todos os testes automatizados com Jest e Supertest
 - **Auditoria de Segurança:** Roda `npm audit` para identificar vulnerabilidades
-- **Deploy:** Faz deploy automático para o Heroku (apenas na branch `main`)
 
-O pipeline é executado em cada push ou pull request para as branches `main` e `develop`. O deploy só ocorre em pushs para a branch `main`.
+O pipeline é executado em cada push ou pull request para as branches `main` e `develop`.
 
 O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 
@@ -130,9 +129,7 @@ O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 ```
 ├── .github/
 │   └── workflows/
-│       ├── api-tests.yml      # Testes automatizados
-│       ├── code-quality.yml   # Qualidade de código
-│       └── deploy.yml         # Deploy automático
+    └── ci-cd.yml              # CI Pipeline (validação + testes + segurança)
 ├── src/
 │   ├── server.js              # Servidor principal
 │   ├── routes/
@@ -143,6 +140,7 @@ O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 │       └── cartModel.js       # Modelo de dados do carrinho
 ├── tests/
 │   └── cart.test.js           # Testes da API
+│   └── testes.md              # Testes documentados
 ├── .eslintrc.json             # Configuração ESLint
 ├── jest.config.js             # Configuração Jest
 ├── codecov.yml                # Configuração Codecov
@@ -175,17 +173,6 @@ O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 Para desenvolvimento local, a API estará disponível em:
 - **URL**: `http://localhost:3000`
 - **Swagger**: `http://localhost:3000/api-docs`
-
-## 🚀 Deploy
-
-Para configurar o deploy automático:
-
-1. Configure os secrets no GitHub:
-   - `HEROKU_API_KEY`
-   - `HEROKU_APP_NAME`
-   - `HEROKU_EMAIL`
-
-2. O deploy será executado automaticamente após push para a branch `main`
 
 ## 📊 Cobertura de Testes
 
