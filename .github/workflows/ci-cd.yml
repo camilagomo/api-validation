@@ -29,13 +29,12 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v3
         with:
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
 
   lint:
     runs-on: ubuntu-latest

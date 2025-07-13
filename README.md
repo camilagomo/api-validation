@@ -189,4 +189,24 @@ Para configurar o deploy automático:
 
 ## 📊 Cobertura de Testes
 
-Os relatórios de cobertura são gerados automaticamente e enviados para o Codecov após cada push.
+Os relatórios de cobertura são gerados automaticamente e salvos como artifacts do GitHub Actions após cada push.
+
+### Como visualizar os relatórios:
+
+1. **Localmente:**
+   ```bash
+   npm run test:coverage
+   ```
+   Abra o arquivo `coverage/index.html` no navegador
+
+2. **No GitHub Actions:**
+   - Vá para a aba "Actions" do repositório
+   - Clique em uma execução do workflow
+   - Baixe o artifact "coverage-report"
+   - Extraia e abra o arquivo `index.html` no navegador
+
+Os relatórios incluem:
+- Cobertura de linhas de código
+- Cobertura de branches (condicionais)
+- Cobertura de funções
+- Relatórios HTML detalhados
