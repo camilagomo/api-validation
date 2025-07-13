@@ -129,9 +129,7 @@ O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 ```
 ├── .github/
 │   └── workflows/
-│       ├── api-tests.yml      # Testes automatizados
-│       ├── code-quality.yml   # Qualidade de código
-│       └── deploy.yml         # Deploy automático
+    └── ci-cd.yml              # CI Pipeline (validação + testes + segurança)
 ├── src/
 │   ├── server.js              # Servidor principal
 │   ├── routes/
@@ -142,6 +140,7 @@ O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 │       └── cartModel.js       # Modelo de dados do carrinho
 ├── tests/
 │   └── cart.test.js           # Testes da API
+│   └── testes.md              # Testes documentados
 ├── .eslintrc.json             # Configuração ESLint
 ├── jest.config.js             # Configuração Jest
 ├── codecov.yml                # Configuração Codecov
