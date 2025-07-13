@@ -114,21 +114,16 @@ http://localhost:3000/api-docs
 
 ## 🔄 CI/CD
 
-O projeto inclui workflows do GitHub Actions para:
+O projeto utiliza um workflow único de CI/CD no GitHub Actions, que executa automaticamente:
 
-### 1. Testes Automatizados (`.github/workflows/api-tests.yml`)
-- Executa testes em múltiplas versões do Node.js (16, 18, 20)
-- Gera relatórios de cobertura
-- Upload automático para Codecov
+- **Lint:** Verifica a qualidade do código com ESLint
+- **Testes:** Executa todos os testes automatizados com Jest e Supertest
+- **Auditoria de Segurança:** Roda `npm audit` para identificar vulnerabilidades
+- **Deploy:** Faz deploy automático para o Heroku (apenas na branch `main`)
 
-### 2. Qualidade de Código (`.github/workflows/code-quality.yml`)
-- Executa ESLint para verificar padrões de código
-- Auditoria de segurança com `npm audit`
-- Verificação de vulnerabilidades conhecidas
+O pipeline é executado em cada push ou pull request para as branches `main` e `develop`. O deploy só ocorre em pushs para a branch `main`.
 
-### 3. Deploy Automático (`.github/workflows/deploy.yml`)
-- Deploy automático para Heroku após testes bem-sucedidos
-- Requer configuração de secrets no GitHub
+O arquivo do workflow está em `.github/workflows/ci-cd.yml`.
 
 ## 📁 Estrutura do Projeto
 
